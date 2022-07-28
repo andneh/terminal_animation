@@ -1,14 +1,23 @@
+use std::io;
+use std::io::stdout;
+use std::io::Write;
 use std::thread;
 use std::time::Duration;
 use terminal_size::{terminal_size, Height, Width};
 
-const PAPER_MAX: usize = 500;
+const PAPER_MAX: usize = 50000;
 
 struct TerminalEnv {
     width: u16,
     height: u16,
     sqr: u16,
     coefic: f32,
+}
+impl Copy for TerminalEnv {}
+impl Clone for TerminalEnv {
+    fn clone(&self) -> TerminalEnv {
+        *self
+    }
 }
 
 fn start_env_manager_thread() {
@@ -49,18 +58,27 @@ fn update_env_var() -> TerminalEnv {
 fn render_math_patern<F>(
     env: TerminalEnv,
     time: f64,
-    paper: [u16; PAPER_MAX],
+    paper: &mut [char; PAPER_MAX],
     patern: F,
     from_x: i16,
     to_x: i16,
-) -> [u16; PAPER_MAX]
+) -> &mut [char; PAPER_MAX]
 where
     F: Fn(u16) -> u16,
 {
+    for i in 0..(env.width as usize) {
+        paper[i] = '_';
+        //FIXME
+    }
     return paper;
 }
 
-fn printer(x: [u16; PAPER_MAX]) -> () {}
+fn printer(env: TerminalEnv, paper: &mut [char; PAPER_MAX]) -> () {
+    for i in 0..(env.sqr as usize) {
+        print!("{}", paper[i]);
+    }
+    //FIXME
+}
 
 fn main() {
     start_env_manager_thread();
@@ -71,12 +89,17 @@ fn main() {
     let mut time_sec: f64 = 0.0;
     loop {
         let env: TerminalEnv = update_env_var();
-        time_sec += 0.016;
-        thread::sleep(Duration::from_millis(16));
+        time_sec += 0.500;
+        thread::sleep(Duration::from_millis(500));
         // /////////////////////////////////////////////////
 
-        let mut paper: [u16; PAPER_MAX] = [0; PAPER_MAX];
+        let mut paper: [char; PAPER_MAX] = ['0'; PAPER_MAX];
 
-        printer(render_math_patern(env, time_sec, paper, |x| x * x, -4, 4));
+        printer(
+            env,
+            render_math_patern(env, time_sec, &mut paper, |x| x, -4, 4),
+        );
+        //FIXME
+        stdout().flush().ok();
     }
 }
