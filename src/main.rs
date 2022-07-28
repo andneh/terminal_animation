@@ -21,6 +21,7 @@ impl Clone for TerminalEnv {
 }
 
 fn start_env_manager_thread() {
+    //TODO thread
     let env_manager_thread = thread::spawn(move || {
         fn get_terminal_size() -> (u16, u16) {
             if let Some((Width(w), Height(h))) = terminal_size() {
@@ -39,6 +40,7 @@ fn start_env_manager_thread() {
 }
 
 fn start_event_listener_thread() {
+    //TODO thread
     let event_listener_thread = thread::spawn(move || loop {
         thread::sleep(Duration::from_secs(10000))
     });
