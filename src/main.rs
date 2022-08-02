@@ -68,8 +68,8 @@ fn render_math_patern<F>(
 where
     F: Fn(u16) -> u16,
 {
-    for i in 0..(env.width as usize) {
-        paper[i] = '_';
+    for i in 0..(env.sqr as usize) {
+        paper[i] = '#';
         //FIXME
     }
     return paper;
@@ -79,7 +79,6 @@ fn printer(env: TerminalEnv, paper: &mut [char; PAPER_MAX]) -> () {
     for i in 0..(env.sqr as usize) {
         print!("{}", paper[i]);
     }
-    //FIXME
 }
 
 fn main() {
@@ -91,8 +90,8 @@ fn main() {
     let mut time_sec: f64 = 0.0;
     loop {
         let env: TerminalEnv = update_env_var();
-        time_sec += 0.500;
-        thread::sleep(Duration::from_millis(500));
+        time_sec += 0.016; //
+        thread::sleep(Duration::from_millis(16));
         // /////////////////////////////////////////////////
 
         let mut paper: [char; PAPER_MAX] = ['0'; PAPER_MAX];
@@ -101,7 +100,7 @@ fn main() {
             env,
             render_math_patern(env, time_sec, &mut paper, |x| x, -4, 4),
         );
-        //FIXME
-        stdout().flush().ok();
+        // print!("12344");
+        stdout().flush().ok(); // This is the main part of printer
     }
 }
